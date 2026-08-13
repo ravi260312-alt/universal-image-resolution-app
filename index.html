@@ -383,7 +383,74 @@ resizeButton.style.cssText =
 resizeButton.onclick = resizeAndDownload;
 
 document.body.appendChild(resizeButton);
+  
+// Image Quality Check
+const qualityButton = document.createElement("button");
 
+qualityButton.textContent = "Check Image Quality";
+qualityButton.type = "button";
+
+qualityButton.style.cssText =
+"display:block;width:100%;padding:14px;margin:10px 0 15px 0;" +
+"background:#6f42c1;color:white;border:0;border-radius:8px;" +
+"font-size:16px;font-weight:bold;cursor:pointer;";
+
+qualityButton.onclick = function () {
+
+    const width = Number(document.getElementById("width").value);
+    const height = Number(document.getElementById("height").value);
+    const dpi = Number(document.getElementById("dpi").value);
+
+    const targetWidth =
+        Number(document.getElementById("targetWidth").value);
+
+    const targetHeight =
+        Number(document.getElementById("targetHeight").value);
+
+    if (!width || !height || !dpi) {
+        alert("Please upload an image first.");
+        return;
+    }
+
+    if (!targetWidth || !targetHeight) {
+        alert("Please enter target width and height.");
+        return;
+    }
+
+    const requiredWidth = Math.round(targetWidth * dpi);
+    const requiredHeight = Math.round(targetHeight * dpi);
+
+    const widthOK = width >= requiredWidth;
+    const heightOK = height >= requiredHeight;
+
+    let message = "IMAGE QUALITY CHECK\n\n";
+
+    message +=
+        "Current Image: " + width + " × " + height + " px\n";
+
+    message +=
+        "Required Image: " + requiredWidth + " × " +
+        requiredHeight + " px\n\n";
+
+    if (widthOK && heightOK) {
+        message += "✅ GOOD: Image resolution is sufficient.";
+    } else {
+        message +=
+            "⚠️ LOW: Image resolution is not sufficient for the target size.\n\n";
+
+        if (!widthOK) {
+            message += "Width needs improvement.\n";
+        }
+
+        if (!heightOK) {
+            message += "Height needs improvement.\n";
+        }
+    }
+
+    alert(message);
+};
+
+document.body.appendChild(qualityButton);
 </script>
 
 </body>
