@@ -501,6 +501,94 @@ kdpButton.onclick = function() {
 };
 
 document.body.appendChild(kdpButton);
+  // KDP Safe Resize
+const safeResizeButton = document.createElement("button");
+
+safeResizeButton.textContent = "KDP Safe Resize (6.8 × 9.3)";
+safeResizeButton.type = "button";
+
+safeResizeButton.style.cssText =
+"display:block;width:100%;padding:14px;margin:10px 0 15px 0;" +
+"background:#0b8f55;color:white;border:0;border-radius:8px;" +
+"font-size:16px;font-weight:bold;cursor:pointer;";
+
+safeResizeButton.onclick = function () {
+
+    const preview = document.getElementById("previewImage");
+
+    if (!preview || !preview.src) {
+        alert("Please upload an image first.");
+        return;
+    }
+
+    const KDP_WIDTH = 2040;
+    const KDP_HEIGHT = 2790;
+
+    const img = new Image();
+
+    img.onload = function () {
+
+        const canvas = document.createElement("canvas");
+
+        canvas.width = KDP_WIDTH;
+        canvas.height = KDP_HEIGHT;
+
+        const ctx = canvas.getContext("2d");
+
+        // White KDP page background
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, KDP_WIDTH, KDP_HEIGHT);
+
+        // Keep original image proportions
+        const scale = Math.min(
+            KDP_WIDTH / img.width,
+            KDP_HEIGHT / img.height
+        );
+
+        const newWidth = Math.round(img.width * scale);
+        const newHeight = Math.round(img.height * scale);
+
+        const x = Math.round((KDP_WIDTH - newWidth) / 2);
+        const y = Math.round((KDP_HEIGHT - newHeight) / 2);
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
+        ctx.drawImage(
+            img,
+            x,
+            y,
+            newWidth,
+            newHeight
+        );
+
+        canvas.toBlob(function (blob) {
+
+            const link = document.createElement("a");
+
+            link.download = "KDP-Safe-Resize-2040x2790.png";
+
+            link.href = URL.createObjectURL(blob);
+
+            link.click();
+
+            URL.revokeObjectURL(link.href);
+
+        }, "image/png");
+
+        alert(
+            "KDP Safe Resize Complete!\n\n" +
+            "Final Size: 2040 × 2790 px\n" +
+            "Target: 6.8 × 9.3 inches\n" +
+            "Aspect Ratio: Preserved\n" +
+            "No stretching or distortion."
+        );
+    };
+
+    img.src = preview.src;
+};
+
+document.body.appendChild(safeResizeButton);
 </script>
 
 </body>
