@@ -451,6 +451,56 @@ qualityButton.onclick = function () {
 };
 
 document.body.appendChild(qualityButton);
+  // KDP Size & Aspect Ratio Check
+const kdpButton = document.createElement("button");
+
+kdpButton.textContent = "Check KDP Size & Aspect Ratio";
+kdpButton.type = "button";
+
+kdpButton.style.cssText =
+"display:block;width:100%;padding:14px;margin:10px 0 15px;" +
+"background:#7e57c2;color:white;border:0;border-radius:8px;" +
+"font-size:16px;font-weight:bold;cursor:pointer;";
+
+kdpButton.onclick = function() {
+    const w = Number(document.getElementById("width").value);
+    const h = Number(document.getElementById("height").value);
+    const tw = Number(document.getElementById("targetWidth").value);
+    const th = Number(document.getElementById("targetHeight").value);
+
+    if (!w || !h) {
+        alert("Please upload an image first.");
+        return;
+    }
+
+    if (!tw || !th) {
+        alert("Please enter target width and height.");
+        return;
+    }
+
+    const currentRatio = w / h;
+    const targetRatio = tw / th;
+    const difference = Math.abs(currentRatio - targetRatio) / targetRatio * 100;
+
+    let msg = "KDP SIZE & ASPECT RATIO CHECK\n\n";
+
+    msg += "Current Image: " + w + " × " + h + " px\n";
+    msg += "Target Size: " + tw + " × " + th + " inches\n\n";
+    msg += "Current Ratio: " + currentRatio.toFixed(4) + "\n";
+    msg += "Target Ratio: " + targetRatio.toFixed(4) + "\n\n";
+
+    if (difference <= 1) {
+        msg += "✅ GOOD: Aspect ratio matches.\n";
+        msg += "Image can be resized without significant distortion.";
+    } else {
+        msg += "⚠️ WARNING: Aspect ratio does not match.\n";
+        msg += "Cropping or extending may be required.";
+    }
+
+    alert(msg);
+};
+
+document.body.appendChild(kdpButton);
 </script>
 
 </body>
