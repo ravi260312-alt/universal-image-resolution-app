@@ -535,11 +535,11 @@ safeResizeButton.onclick = function () {
 
         const ctx = canvas.getContext("2d");
 
-        // White KDP page background
-        ctx.fillStyle = "white";
+        // White background
+        ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, KDP_WIDTH, KDP_HEIGHT);
 
-        // Keep original image proportions
+        // Preserve original aspect ratio
         const scale = Math.min(
             KDP_WIDTH / img.width,
             KDP_HEIGHT / img.height
@@ -548,6 +548,7 @@ safeResizeButton.onclick = function () {
         const newWidth = Math.round(img.width * scale);
         const newHeight = Math.round(img.height * scale);
 
+        // Center image
         const x = Math.round((KDP_WIDTH - newWidth) / 2);
         const y = Math.round((KDP_HEIGHT - newHeight) / 2);
 
@@ -564,31 +565,49 @@ safeResizeButton.onclick = function () {
 
         canvas.toBlob(function (blob) {
 
+            if (!blob) {
+                alert("Error creating PNG file.");
+                return;
+            }
+
             const link = document.createElement("a");
 
             link.download = "KDP-Safe-Resize-2040x2790.png";
 
             link.href = URL.createObjectURL(blob);
 
+            document.body.appendChild(link);
+
             link.click();
 
-            URL.revokeObjectURL(link.href);
+            document.body.removeChild(link);
+
+            setTimeout(function () {
+                URL.revokeObjectURL(link.href);
+            }, 1000);
+
+            alert(
+                "KDP SAFE RESIZE COMPLETE!\n\n" +
+                "Final Pixel Size: 2040 × 2790 px\n" +
+                "Target Size: 6.8 × 9.3 inches\n" +
+                "Format: PNG\n" +
+                "Aspect Ratio: Preserved\n" +
+                "No stretching or distortion."
+            );
 
         }, "image/png");
 
-        alert(
-            "KDP Safe Resize Complete!\n\n" +
-            "Final Size: 2040 × 2790 px\n" +
-            "Target: 6.8 × 9.3 inches\n" +
-            "Aspect Ratio: Preserved\n" +
-            "No stretching or distortion."
-        );
+    };
+
+    img.onerror = function () {
+        alert("Unable to load the image.");
     };
 
     img.src = preview.src;
 };
 
 document.body.appendChild(safeResizeButton);
+
 </script>
 
 </body>
