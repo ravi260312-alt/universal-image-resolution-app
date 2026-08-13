@@ -451,6 +451,7 @@ qualityButton.onclick = function () {
 };
 
 document.body.appendChild(qualityButton);
+
   // KDP Size & Aspect Ratio Check
 const kdpButton = document.createElement("button");
 
@@ -458,50 +459,74 @@ kdpButton.textContent = "Check KDP Size & Aspect Ratio";
 kdpButton.type = "button";
 
 kdpButton.style.cssText =
-"display:block;width:100%;padding:14px;margin:10px 0 15px;" +
+"display:block;width:100%;padding:14px;margin:10px 0 15px 0;" +
 "background:#7e57c2;color:white;border:0;border-radius:8px;" +
 "font-size:16px;font-weight:bold;cursor:pointer;";
 
-kdpButton.onclick = function() {
-    const w = Number(document.getElementById("width").value);
-    const h = Number(document.getElementById("height").value);
-    const tw = Number(document.getElementById("targetWidth").value);
-    const th = Number(document.getElementById("targetHeight").value);
+kdpButton.onclick = function () {
 
-    if (!w || !h) {
+    const width = Number(document.getElementById("width").value);
+    const height = Number(document.getElementById("height").value);
+
+    if (!width || !height) {
         alert("Please upload an image first.");
         return;
     }
 
-    if (!tw || !th) {
-        alert("Please enter target width and height.");
-        return;
-    }
+    // KDP Target: 6.8 × 9.3 inches at 300 DPI
+    const KDP_WIDTH = 2040;
+    const KDP_HEIGHT = 2790;
 
-    const currentRatio = w / h;
-    const targetRatio = tw / th;
-    const difference = Math.abs(currentRatio - targetRatio) / targetRatio * 100;
+    const TARGET_RATIO = KDP_WIDTH / KDP_HEIGHT;
+    const currentRatio = width / height;
 
-    let msg = "KDP SIZE & ASPECT RATIO CHECK\n\n";
+    const ratioDifference =
+        Math.abs(currentRatio - TARGET_RATIO) / TARGET_RATIO * 100;
 
-    msg += "Current Image: " + w + " × " + h + " px\n";
-    msg += "Target Size: " + tw + " × " + th + " inches\n\n";
-    msg += "Current Ratio: " + currentRatio.toFixed(4) + "\n";
-    msg += "Target Ratio: " + targetRatio.toFixed(4) + "\n\n";
+    let message = "KDP SIZE & ASPECT RATIO CHECK\n\n";
 
-    if (difference <= 1) {
-        msg += "✅ GOOD: Aspect ratio matches.\n";
-        msg += "Image can be resized without significant distortion.";
+    message +=
+        "Required Size: 2040 × 2790 px\n" +
+        "Target Print Size: 6.8 × 9.3 inches\n" +
+        "Required Resolution: 300 DPI\n\n";
+
+    message +=
+        "Current Image: " + width + " × " + height + " px\n" +
+        "Current Aspect Ratio: " + currentRatio.toFixed(4) + "\n" +
+        "Required Aspect Ratio: " + TARGET_RATIO.toFixed(4) + "\n\n";
+
+    const sizeOK = width === KDP_WIDTH && height === KDP_HEIGHT;
+    const ratioOK = ratioDifference <= 1;
+
+    if (sizeOK && ratioOK) {
+
+        message +=
+            "✅ PERFECT!\n" +
+            "Image is exactly 2040 × 2790 px.\n" +
+            "Aspect ratio is correct.\n" +
+            "Ready for 6.8 × 9.3 inch KDP page at 300 DPI.";
+
     } else {
-        msg += "⚠️ WARNING: Aspect ratio does not match.\n";
-        msg += "Cropping or extending may be required.";
+
+        message += "⚠️ CHECK REQUIRED\n\n";
+
+        if (!sizeOK) {
+            message +=
+                "Required pixels: 2040 × 2790 px\n" +
+                "Your pixels: " + width + " × " + height + " px\n\n";
+        }
+
+        if (!ratioOK) {
+            message +=
+                "⚠️ Aspect ratio does not match 6.8 × 9.3.\n" +
+                "Cropping or resizing may be required.";
+        }
     }
 
-    alert(msg);
+    alert(message);
 };
 
 document.body.appendChild(kdpButton);
-  
 </script>
 
 </body>
