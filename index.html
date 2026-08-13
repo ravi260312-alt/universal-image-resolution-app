@@ -329,7 +329,60 @@ function calculateResolution() {
 
   }
 
+}// Resize and Download feature
+function resizeAndDownload() {
+  const targetWidth = Math.round(
+    Number(document.getElementById("targetWidth").value) *
+    Number(document.getElementById("dpi").value)
+  );
+
+  const targetHeight = Math.round(
+    Number(document.getElementById("targetHeight").value) *
+    Number(document.getElementById("dpi").value)
+  );
+
+  const preview = document.getElementById("previewImage");
+
+  if (!preview || !preview.src) {
+    alert("Please upload an image first.");
+    return;
+  }
+
+  if (!targetWidth || !targetHeight) {
+    alert("Please enter target width, height and DPI.");
+    return;
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  ctx.drawImage(preview, 0, 0, targetWidth, targetHeight);
+
+  canvas.toBlob(function(blob) {
+    const link = document.createElement("a");
+    link.download = "resized-image-" + targetWidth + "x" + targetHeight + ".png";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }, "image/png");
 }
+
+const resizeButton = document.createElement("button");
+resizeButton.textContent = "Resize & Download Image";
+resizeButton.type = "button";
+resizeButton.style.cssText =
+  "display:block;width:100%;padding:14px;margin:15px 0;" +
+  "background:#198754;color:white;border:0;border-radius:8px;" +
+  "font-size:16px;font-weight:bold;cursor:pointer;";
+
+resizeButton.onclick = resizeAndDownload;
+
+document.body.appendChild(resizeButton);
 
 </script>
 
