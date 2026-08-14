@@ -598,7 +598,9 @@ safeResizeButton.onclick = function () {
 
             const link = document.createElement("a");
 
-            link.download = "KDP-Safe-Resize-2040x2790.png";
+            const originalName = preview.files?.[0]?.name || "image.png";
+const baseName = originalName.replace(/\.[^/.]+$/, "");
+link.download = baseName + "-KDP-2040x2790.png";
             link.href = URL.createObjectURL(blob);
 
             document.body.appendChild(link);
