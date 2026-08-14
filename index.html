@@ -328,49 +328,203 @@ function calculateResolution() {
       "Enter target size";
 
   }
+// Universal Resize Controls
 
-}// Resize and Download feature
+const resizeControls = document.createElement("div");
+
+resizeControls.style.cssText =
+"display:block;width:100%;padding:12px;margin:15px 0;" +
+"background:#f4f7fb;border-radius:10px;";
+
+resizeControls.innerHTML = `
+<label style="display:block;font-weight:bold;margin-bottom:6px;">
+Resize Unit
+</label>
+
+<select id="resizeUnit"
+style="width:100%;padding:12px;margin-bottom:12px;">
+<option value="inches">Inches</option>
+<option value="pixels">Pixels</option>
+</select>
+
+<label style="display:block;font-weight:bold;margin-bottom:6px;">
+Resize Mode
+</label>
+
+<select id="resizeMode"
+style="width:100%;padding:12px;">
+<option value="fit">Fit - Preserve Aspect Ratio</option>
+<option value="crop">Crop - Fill Target Size</option>
+<option value="stretch">Stretch - Exact Size</option>
+</select>
+`;
+
+document.body.appendChild(resizeControls);
+// UNIVERSAL RESIZE ENGINE
 function resizeAndDownload() {
-  const targetWidth = Math.round(
-    Number(document.getElementById("targetWidth").value) *
-    Number(document.getElementById("dpi").value)
-  );
 
-  const targetHeight = Math.round(
-    Number(document.getElementById("targetHeight").value) *
-    Number(document.getElementById("dpi").value)
-  );
+    const preview = document.getElementById("previewImage");
 
-  const preview = document.getElementById("previewImage");
+    if (!preview || !preview.src) {
+        alert("Please upload an image first.");
+        return;
+    }
 
-  if (!preview || !preview.src) {
-    alert("Please upload an image first.");
-    return;
-  }
+    const inputWidth = Number(document.getElementById("targetWidth").value);
+    const inputHeight = Number(document.getElementById("targetHeight").value);
+    const dpi = Number(document.getElementById("dpi").value);
 
-  if (!targetWidth || !targetHeight) {
-    alert("Please enter target width, height and DPI.");
-    return;
-  }
+    const unit = document.getElementById("resizeUnit").value;
+    const mode = document.getElementById("resizeMode").value;
 
-  const canvas = document.createElement("canvas");
-  canvas.width = targetWidth;
-  canvas.height = targetHeight;
+    if (!inputWidth || !inputHeight) {
+        alert("Please enter target width and height.");
+        return;
+    }
 
-  const ctx = canvas.getContext("2d");
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
+    if (!dpi || dpi <= 0) {
+        alert("Please enter a valid DPI.");
+        return;
+    }
 
-  ctx.drawImage(preview, 0, 0, targetWidth, targetHeight);
+    let targetWidth;
+    let targetHeight;
 
-  canvas.toBlob(function(blob) {
-    const link = document.createElement("a");
-    link.download = "resized-image-" + targetWidth + "x" + targetHeight + ".png";
-    link.href = URL.createObjectURL(blob);
-    link.click();
-    URL.revokeObjectURL(link.href);
-  }, "image/png");
+    // Convert target size to pixels
+    if (unit === "inches") {
+        targetWidth = Math.round(inputWidth * dpi);
+        targetHeight = Math.round(inputHeight * dpi);
+    } else {
+        targetWidth = Math.round(inputWidth);
+        targetHeight = Math.round(inputHeight);
+    }
+
+    const img = new Image();
+
+    img.onload = function () {
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
+        // White background
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+        const sourceRatio = img.width / img.height;
+        const targetRatio = targetWidth / targetHeight;
+
+        let drawWidth;
+        let drawHeight;
+        let x;
+        let y;
+
+        if (mode === "stretch") {
+
+            // Stretch image to exact target size
+            drawWidth = targetWidth;
+            drawHeight = targetHeight;
+            x = 0;
+            y = 0;
+
+        } else if (mode === "fit") {
+
+            // Fit image without distortion
+            const scale = Math.min(
+                targetWidth / img.width,
+                targetHeight / img.height
+            );
+
+            drawWidth = Math.round(img.width * scale);
+            drawHeight = Math.round(img.height * scale);
+
+            x = Math.round((targetWidth - drawWidth) / 2);
+            y = Math.round((targetHeight - drawHeight) / 2);
+
+        } else if (mode === "crop") {
+
+            // Fill target area and crop excess
+            const scale = Math.max(
+                targetWidth / img.width,
+                targetHeight / img.height
+            );
+
+            drawWidth = Math.round(img.width * scale);
+            drawHeight = Math.round(img.height * scale);
+
+            x = Math.round((targetWidth - drawWidth) / 2);
+            y = Math.round((targetHeight - drawHeight) / 2);
+        }
+
+        ctx.drawImage(
+            img,
+            x,
+            y,
+            drawWidth,
+            drawHeight
+        );
+
+        canvas.toBlob(function(blob) {
+
+            if (!blob) {
+                alert("Error creating resized image.");
+                return;
+            }
+
+            const link = document.createElement("a");
+
+            const originalName =
+                document.getElementById("imageInput").files?.[0]?.name ||
+                "image.png";
+
+            const baseName =
+                originalName.replace(/\.[^/.]+$/, "");
+
+            link.download =
+                baseName +
+                "-resized-" +
+                targetWidth +
+                "x" +
+                targetHeight +
+                ".png";
+
+            link.href = URL.createObjectURL(blob);
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(function() {
+                URL.revokeObjectURL(link.href);
+            }, 1000);
+
+            alert(
+                "UNIVERSAL RESIZE COMPLETE ✅\n\n" +
+                "Final Pixel Size: " +
+                targetWidth + " × " + targetHeight + " px\n" +
+                "Target Size: " +
+                inputWidth + " × " + inputHeight + " " +
+                unit + "\n" +
+                "DPI: " + dpi + "\n" +
+                "Mode: " + mode.toUpperCase() + "\n\n" +
+                "Image successfully resized."
+            );
+
+        }, "image/png");
+    };
+
+    img.onerror = function() {
+        alert("Unable to load the image.");
+    };
+
+    img.src = preview.src;
 }
+
 
 const resizeButton = document.createElement("button");
 resizeButton.textContent = "Resize & Download Image";
