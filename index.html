@@ -636,18 +636,39 @@ finalCheckButton.textContent = "KDP FINAL CHECK";
 finalCheckButton.style.background = "#198754";
 
 finalCheckButton.onclick = function () {
-    const width = 2040;
-    const height = 2790;
-    const aspect = (width / height).toFixed(4);
 
-    alert(
-        "KDP FINAL CHECK ✅\n\n" +
-        "Pixel Size: " + width + " × " + height + " px\n" +
-        "Print Size: 6.8 × 9.3 inches\n" +
-        "Target DPI: 300\n" +
-        "Aspect Ratio: " + aspect + "\n\n" +
-        "STATUS: KDP READY ✅"
-    );
+    const width = preview.naturalWidth;
+    const height = preview.naturalHeight;
+
+    const requiredWidth = KDP_WIDTH;
+    const requiredHeight = KDP_HEIGHT;
+
+    const aspect = (width / height).toFixed(4);
+    const requiredAspect = (requiredWidth / requiredHeight).toFixed(4);
+
+    if (width === requiredWidth && height === requiredHeight) {
+
+        alert(
+            "KDP FINAL CHECK ✅\n\n" +
+            "Pixel Size: " + width + " × " + height + " px\n" +
+            "Print Size: 6.8 × 9.3 inches\n" +
+            "Target DPI: 300\n" +
+            "Aspect Ratio: " + aspect + "\n\n" +
+            "STATUS: KDP READY ✅"
+        );
+
+    } else {
+
+        alert(
+            "KDP FINAL CHECK ⚠️\n\n" +
+            "Current Pixel Size: " + width + " × " + height + " px\n" +
+            "Required Pixel Size: " + requiredWidth + " × " + requiredHeight + " px\n\n" +
+            "Current Aspect Ratio: " + aspect + "\n" +
+            "Required Aspect Ratio: " + requiredAspect + "\n\n" +
+            "STATUS: NOT KDP READY ❌\n\n" +
+            "Please use KDP SAFE RESIZE first."
+        );
+    }
 };
 
 document.body.appendChild(finalCheckButton);
