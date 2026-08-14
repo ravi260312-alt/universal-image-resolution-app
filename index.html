@@ -640,8 +640,9 @@ finalCheckButton.onclick = function () {
     const requiredWidth = 2040;
     const requiredHeight = 2790;
 
-    const width = img.naturalWidth || img.width;
-const height = img.naturalHeight || img.height;
+    const checkImage = document.querySelector('img');
+const width = checkImage.naturalWidth || checkImage.width;
+const height = checkImage.naturalHeight || checkImage.height;
 
     const aspect = (width / height).toFixed(4);
     const requiredAspect = (requiredWidth / requiredHeight).toFixed(4);
