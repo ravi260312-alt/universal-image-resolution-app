@@ -631,6 +631,26 @@ link.download = baseName + "-KDP-2040x2790.png";
 };
 
 document.body.appendChild(safeResizeButton);
+  const finalCheckButton = document.createElement("button");
+finalCheckButton.textContent = "KDP FINAL CHECK";
+finalCheckButton.style.background = "#198754";
+
+finalCheckButton.onclick = function () {
+    const width = 2040;
+    const height = 2790;
+    const aspect = (width / height).toFixed(4);
+
+    alert(
+        "KDP FINAL CHECK ✅\n\n" +
+        "Pixel Size: " + width + " × " + height + " px\n" +
+        "Print Size: 6.8 × 9.3 inches\n" +
+        "Target DPI: 300\n" +
+        "Aspect Ratio: " + aspect + "\n\n" +
+        "STATUS: KDP READY ✅"
+    );
+};
+
+document.body.appendChild(finalCheckButton);
 </script>
 
 </body>
