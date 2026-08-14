@@ -637,11 +637,11 @@ finalCheckButton.style.background = "#198754";
 
 finalCheckButton.onclick = function () {
 
-    const width = preview.naturalWidth;
-    const height = preview.naturalHeight;
+    const requiredWidth = 2040;
+    const requiredHeight = 2790;
 
-    const requiredWidth = KDP_WIDTH;
-    const requiredHeight = KDP_HEIGHT;
+    const width = preview.naturalWidth || preview.width;
+    const height = preview.naturalHeight || preview.height;
 
     const aspect = (width / height).toFixed(4);
     const requiredAspect = (requiredWidth / requiredHeight).toFixed(4);
@@ -662,7 +662,8 @@ finalCheckButton.onclick = function () {
         alert(
             "KDP FINAL CHECK ⚠️\n\n" +
             "Current Pixel Size: " + width + " × " + height + " px\n" +
-            "Required Pixel Size: " + requiredWidth + " × " + requiredHeight + " px\n\n" +
+            "Required Pixel Size: " +
+            requiredWidth + " × " + requiredHeight + " px\n" +
             "Current Aspect Ratio: " + aspect + "\n" +
             "Required Aspect Ratio: " + requiredAspect + "\n\n" +
             "STATUS: NOT KDP READY ❌\n\n" +
