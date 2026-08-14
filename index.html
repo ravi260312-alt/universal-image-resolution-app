@@ -751,7 +751,8 @@ safeResizeButton.onclick = function () {
                 alert("Error creating PNG file.");
                 return;
             }
-
+preview.src = URL.createObjectURL(blob);
+preview.style.display = "block";
             const link = document.createElement("a");
 
             const originalName = preview.files?.[0]?.name || "image.png";
@@ -796,12 +797,19 @@ finalCheckButton.onclick = function () {
     const requiredWidth = 2040;
     const requiredHeight = 2790;
 
-    const checkImage = document.querySelector('img');
-const width = checkImage.naturalWidth || checkImage.width;
-const height = checkImage.naturalHeight || checkImage.height;
+    const checkImage = document.querySelector('#previewImage');
+
+    if (!checkImage || !checkImage.src) {
+        alert("Please upload and resize an image first.");
+        return;
+    }
+
+    const width = checkImage.naturalWidth || checkImage.width;
+    const height = checkImage.naturalHeight || checkImage.height;
 
     const aspect = (width / height).toFixed(4);
-    const requiredAspect = (requiredWidth / requiredHeight).toFixed(4);
+    const requiredAspect =
+        (requiredWidth / requiredHeight).toFixed(4);
 
     if (width === requiredWidth && height === requiredHeight) {
 
@@ -827,6 +835,7 @@ const height = checkImage.naturalHeight || checkImage.height;
             "Please use KDP SAFE RESIZE first."
         );
     }
+};
 };
 
 document.body.appendChild(finalCheckButton);
