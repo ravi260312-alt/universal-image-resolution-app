@@ -234,28 +234,23 @@ footer {
 const imageInput = document.getElementById("imageInput");
 
 imageInput.addEventListener("change", function(event) {
+    const file = event.target.files[0];
 
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  const image = new Image();
-
-  image.onload = function() {
-
-    document.getElementById("width").value = image.width;
-    document.getElementById("height").value = image.height;
+    if (!file) return;
 
     const preview = document.getElementById("previewImage");
+    const imageURL = URL.createObjectURL(file);
 
-    preview.src = URL.createObjectURL(file);
+    preview.onload = function() {
+    document.getElementById("width").value = preview.naturalWidth;
+    document.getElementById("height").value = preview.naturalHeight;
+
     preview.style.display = "block";
 
-    calculateResolution();
-  };
+    URL.revokeObjectURL(imageURL);
+};
 
-  image.src = URL.createObjectURL(file);
-
+    preview.src = imageURL;
 });
 
 
