@@ -143,13 +143,20 @@ footer {
     <h2>1. Upload Your Image</h2>
 
     <input
-      type="file"
-      id="imageInput"
-      accept="image/*"
-    >
+    type="file"
+    id="imageInput"
+    accept="image/*"
+    onchange="showImage(this)"
+>
 
     <div class="preview">
-      <img id="previewImage">
+    <img id="previewImage"
+         style="display:none; max-width:100%; max-height:400px;"
+         onload="
+             this.style.display='block';
+             document.getElementById('width').value=this.naturalWidth;
+             document.getElementById('height').value=this.naturalHeight;
+         ">
     </div>
   </div>
 
@@ -230,6 +237,13 @@ footer {
 </footer>
 
 <script>
+  function showImage(input) {
+    if (!input.files || !input.files[0]) return;
+
+    const preview = document.getElementById("previewImage");
+    preview.src = URL.createObjectURL(input.files[0]);
+    preview.style.display = "block";
+  }
 
 const imageInput = document.getElementById("imageInput");
 
