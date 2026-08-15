@@ -239,18 +239,21 @@ imageInput.addEventListener("change", function(event) {
     if (!file) return;
 
     const preview = document.getElementById("previewImage");
-    const imageURL = URL.createObjectURL(file);
 
-    preview.onload = function() {
-    document.getElementById("width").value = preview.naturalWidth;
-    document.getElementById("height").value = preview.naturalHeight;
+    const reader = new FileReader();
 
-    preview.style.display = "block";
+    reader.onload = function(e) {
+        preview.onload = function() {
+            document.getElementById("width").value = preview.naturalWidth;
+            document.getElementById("height").value = preview.naturalHeight;
 
-    URL.revokeObjectURL(imageURL);
-};
+            preview.style.display = "block";
+        };
 
-    preview.src = imageURL;
+        preview.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
 });
 
 
