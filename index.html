@@ -233,27 +233,27 @@ footer {
 
 const imageInput = document.getElementById("imageInput");
 
-imageInput.addEventListener("change", function(event) {
-    const file = event.target.files[0];
+imageInput.addEventListener("change", function () {
+
+    const file = this.files[0];
 
     if (!file) return;
 
     const preview = document.getElementById("previewImage");
 
-    const reader = new FileReader();
+    const imageURL = URL.createObjectURL(file);
 
-    reader.onload = function(e) {
-        preview.onload = function() {
-            document.getElementById("width").value = preview.naturalWidth;
-            document.getElementById("height").value = preview.naturalHeight;
+    preview.onload = function () {
 
-            preview.style.display = "block";
-        };
+        document.getElementById("width").value = preview.naturalWidth;
+        document.getElementById("height").value = preview.naturalHeight;
 
-        preview.src = e.target.result;
+        preview.style.display = "block";
+
+        URL.revokeObjectURL(imageURL);
     };
 
-    reader.readAsDataURL(file);
+    preview.src = imageURL;
 });
 
 
